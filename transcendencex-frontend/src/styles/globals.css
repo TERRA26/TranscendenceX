@@ -1,0 +1,68 @@
+/* src/styles/globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    body {
+        @apply bg-background dark:bg-dark text-text-primary dark:text-text-dark-primary;
+    }
+}
+
+@layer components {
+    .chat-input {
+        @apply w-full px-4 py-3 rounded-xl
+        bg-background dark:bg-dark
+        border border-gray-200 dark:border-dark-border
+        text-text-primary dark:text-text-dark-primary
+        focus:ring-2 focus:ring-brand-primary focus:border-transparent
+        transition-all duration-200;
+    }
+
+    .btn-primary {
+        @apply px-4 py-2 rounded-xl
+        bg-brand-primary hover:bg-brand-secondary
+        text-white font-medium
+        transition-colors duration-200;
+    }
+
+    .sidebar-item {
+        @apply flex items-center px-4 py-3 rounded-xl
+        text-text-secondary dark:text-text-dark-secondary
+        hover:bg-background-secondary dark:hover:bg-dark-secondary
+        transition-colors duration-200;
+    }
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-text-secondary/20 dark:bg-text-dark-secondary/20 rounded-full;
+}
+.animate-shimmer {
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+    50% {
+        transform: translateX(100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
