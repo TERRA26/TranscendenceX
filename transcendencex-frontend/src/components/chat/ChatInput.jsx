@@ -1,11 +1,24 @@
 import { Send, Paperclip, X } from 'lucide-react';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function ChatInput({ onSubmit, isLoading }) {
     const [message, setMessage] = useState('');
     const [files, setFiles] = useState([]);
     const fileInputRef = useRef(null);
+    const textareaRef = useRef(null);
+
+    useEffect(() => {
+        adjustTextareaHeight();
+    }, [message]);
+
+    const adjustTextareaHeight = () => {
+        const textarea = textareaRef.current;
+        if (textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = `${Math.min(textarea.scrollHeight, 200)}px`;
+        }
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -13,6 +26,23 @@ export default function ChatInput({ onSubmit, isLoading }) {
         onSubmit(message, files);
         setMessage('');
         setFiles([]);
+        // Reset textarea height
+        if (textareaRef.current) {
+            textareaRef.current.style.height = '50px';
+        }
+    };
+
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            if (e.shiftKey) {
+                // Allow the default behavior for Shift+Enter (new line)
+                return;
+            } else {
+                // Prevent the default Enter behavior and submit
+                e.preventDefault();
+                handleSubmit(e);
+            }
+        }
     };
 
     const handleFileChange = (e) => {
@@ -88,7 +118,7 @@ export default function ChatInput({ onSubmit, isLoading }) {
                 className="relative flex items-end gap-2"
             >
                 <div className="flex-1 relative">
-                    <div className="absolute left-3 top-1/2 -translate-y-1/2 z-10">
+                    <div className="absolute left-3 top-4 z-10">
                         {/* File Upload Button */}
                         <motion.button
                             type="button"
@@ -106,12 +136,14 @@ export default function ChatInput({ onSubmit, isLoading }) {
                         </motion.button>
                     </div>
 
-                    <input
-                        type="text"
+                    <textarea
+                        ref={textareaRef}
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
+                        onKeyDown={handleKeyDown}
                         onPaste={handlePaste}
                         placeholder="Type a message..."
+                        rows={1}
                         className="w-full pl-14 pr-4 py-3 rounded-xl
                                  bg-black/[0.02] dark:bg-white/[0.02]
                                  border border-black/[0.05] dark:border-white/[0.05]
@@ -119,7 +151,18 @@ export default function ChatInput({ onSubmit, isLoading }) {
                                  focus:border-black/20 dark:focus:border-white/20
                                  focus:bg-black/[0.03] dark:focus:bg-white/[0.03]
                                  hover:border-black/10 dark:hover:border-white/10
-                                 transition-all duration-200"
+                                 transition-all duration-200
+                                 resize-none min-h-[50px] max-h-[200px]
+                                 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600
+                                 scrollbar-track-transparent
+                                 scrollbar-thumb-rounded-full
+                                 [-ms-overflow-style:'none']
+                                 [scrollbar-width:'thin']
+                                 [&::-webkit-scrollbar]:w-2
+                                 [&::-webkit-scrollbar-track]:bg-transparent
+                                 [&::-webkit-scrollbar-thumb]:bg-gray-300
+                                 dark:[&::-webkit-scrollbar-thumb]:bg-gray-600
+                                 [&::-webkit-scrollbar-thumb]:rounded-full"
                         disabled={isLoading}
                     />
 
